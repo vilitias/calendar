@@ -1,24 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+
+const days = Array.from(Array(31).keys()).map((i) => i + 1);
 
 function App() {
+  console.log(days);
+  const [checkedCells, setCheckedCells] = useState(
+    JSON.parse(localStorage.getItem("cellsSaved")) || []
+  );
+  console.log(checkedCells);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main">
+      <div className="header">calendar of programming for Jul, YAY</div>
+      <div>
+        {days.map((day) => {
+          function checked() {
+            const isIncludedinList = checkedCells.includes(day);
+
+            const newListOfCheckedCells = isIncludedinList
+              ? checkedCells.filter((item) => {
+                  return item !== day;
+                }) // () => {body} - эт функция
+              : [...checkedCells, day];
+            setCheckedCells(newListOfCheckedCells); //[] - creates an array; ...  - destructuring and existing array; ...[existing array], new element
+            localStorage.setItem(
+              "cellsSaved",
+              JSON.stringify(newListOfCheckedCells)
+            );
+          }
+          const isCheckedDay = checkedCells.includes(day); // проверяет наличие елемента в массиве. возвращает буль
+          return (
+            <button
+              className={`cell ${isCheckedDay ? "checked" : ""}`}
+              onClick={checked}
+            >
+              {day}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
