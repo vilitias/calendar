@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import "./App.css";
+import "./callbacks.js";
 
-const days = Array.from(Array(31).keys()).map((i) => i + 1);
+const days = Array.from(Array(30).keys()).map((i) => i + 1);
+const url = "http://192.168.1.36:2000/setState";
 
 function App() {
-  console.log(days);
   const [checkedCells, setCheckedCells] = useState(
     JSON.parse(localStorage.getItem("cellsSaved")) || []
   );
-  console.log(checkedCells);
+  //JSON.parse(localStorage.getItem("cellsSaved")
 
   return (
     <div className="main">
@@ -24,14 +25,27 @@ function App() {
                 }) // () => {body} - эт функция
               : [...checkedCells, day];
             setCheckedCells(newListOfCheckedCells); //[] - creates an array; ...  - destructuring and existing array; ...[existing array], new element
-            localStorage.setItem(
-              "cellsSaved",
-              JSON.stringify(newListOfCheckedCells)
-            );
+            fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                bubu: "newListOfCheckedCells",
+                bibizyaka: newListOfCheckedCells,
+              }),
+            });
+            // localStorage.setItem(
+            //   "cellsSaved",
+            //   JSON.stringify(newListOfCheckedCells)
+            // );
           }
+
           const isCheckedDay = checkedCells.includes(day); // проверяет наличие елемента в массиве. возвращает буль
+
           return (
             <button
+              key={day}
               className={`cell ${isCheckedDay ? "checked" : ""}`}
               onClick={checked}
             >
