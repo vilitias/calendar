@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import "./callbacks.js";
 
 const days = Array.from(Array(30).keys()).map((i) => i + 1);
-const url = "http://192.168.1.36:2000/setState";
+const urlSet = "http://192.168.1.36:2000/setState";
+const urlGet = "http://192.168.1.36:2000/getState";
 
 function App() {
-  const [checkedCells, setCheckedCells] = useState(
-    JSON.parse(localStorage.getItem("cellsSaved")) || []
-  );
-  //JSON.parse(localStorage.getItem("cellsSaved")
+  const [checkedCells, setCheckedCells] = useState([]);
+
+  useEffect(() => {
+    fetch(urlGet, {
+      method: "GET",
+    });
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      setCheckedCells(response.bibizyaka);
+    });
+  // const [checkedCells, setCheckedCells] = useState(
+  //   JSON.parse(localStorage.getItem("cellsSaved")) || []
+  // ); - how it was was localStorage saving
 
   return (
     <div className="main">
@@ -25,7 +36,7 @@ function App() {
                 }) // () => {body} - эт функция
               : [...checkedCells, day];
             setCheckedCells(newListOfCheckedCells); //[] - creates an array; ...  - destructuring and existing array; ...[existing array], new element
-            fetch(url, {
+            fetch(urlSet, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -41,7 +52,7 @@ function App() {
             // );
           }
 
-          const isCheckedDay = checkedCells.includes(day); // проверяет наличие елемента в массиве. возвращает буль
+          const isCheckedDay = checkedCells.includes(day); // проверяет наличие элемента в массиве. возвращает буль
 
           return (
             <button
